@@ -2,7 +2,7 @@ import { useState } from 'react';
 import "./App.css";
 
 function Posts() {
-  const posts = JSON.parse(localStorage.getItem("posts")) || [];
+  const [posts, setPosts] = useState(JSON.parse(localStorage.getItem("posts")) || []);
 
   return (
     <div>
@@ -15,6 +15,7 @@ function Posts() {
             <li key={index}>
               <h3>{post.title}</h3>
               <p>{post.content}</p>
+              <button onClick={() => deletePost(posts, setPosts, index)}>Delete</button>
             </li>
           ))}
         </ul>
@@ -27,6 +28,12 @@ function savePost({post}) {
   let storedArray = JSON.parse(localStorage.getItem("posts")) || [];
   storedArray.push(post)
   localStorage.setItem("posts", JSON.stringify(storedArray));
+}
+
+function deletePost(posts, setPosts, indexToDelete) {
+  const updatedPosts = posts.filter((_, i) => i !== indexToDelete);
+  localStorage.setItem("posts", JSON.stringify(updatedPosts));
+  setPosts(updatedPosts);
 }
 
 function Form({submitHandler}) {
