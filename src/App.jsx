@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import "./App.css";
 
-function Posts() {
-  const [posts, setPosts] = useState(JSON.parse(localStorage.getItem("posts")) || []);
+function Posts({ setMessage, posts, setPosts }) {
 
   return (
     <div>
@@ -15,7 +14,7 @@ function Posts() {
             <li key={index}>
               <h3>{post.title}</h3>
               <p>{post.content}</p>
-              <button onClick={() => deletePost(posts, setPosts, index)}>Delete</button>
+              <button onClick={() => deletePost(posts, setPosts, index, setMessage)}>Delete</button>
             </li>
           ))}
         </ul>
@@ -24,16 +23,22 @@ function Posts() {
   );
 }
 
-function savePost({post}) {
+function savePost(post, setPosts) {
   let storedArray = JSON.parse(localStorage.getItem("posts")) || [];
   storedArray.push(post)
   localStorage.setItem("posts", JSON.stringify(storedArray));
+  setPosts(storedArray);
 }
 
-function deletePost(posts, setPosts, indexToDelete) {
+function deletePost(posts, setPosts, indexToDelete, setMessage) {
   const updatedPosts = posts.filter((_, i) => i !== indexToDelete);
   localStorage.setItem("posts", JSON.stringify(updatedPosts));
   setPosts(updatedPosts);
+  (async () => {
+    setMessage("Successfully deleted the post ", indexToDelete);
+    await wait(2);
+    setMessage(null); 
+  })();
 }
 
 function Form({submitHandler}) {
@@ -57,6 +62,7 @@ function wait(seconds) {
 }
 
 function App() {
+  const [posts, setPosts] = useState(JSON.parse(localStorage.getItem("posts")) || []);
   const [message, setMessage] = useState(null);
   const submitHandler = (e) => {
     e.preventDefault();
@@ -65,21 +71,20 @@ function App() {
     const title = formData.get('title');
     const content = formData.get('content');
     const post = { title, content }
-    savePost({post});
+    savePost(post, setPosts);
     form.reset();
-    async function msg() {
+    (async () => {
       setMessage("Successfully stored your post!")
       await wait(2);
       setMessage(null); 
-    }
-    msg();
+    })();
   }
   return (
     <>
       <h1>Hello world!</h1>
-      <Form submitHandler={submitHandler}/>
+      <Form submitHandler={submitHandler} setMessage={setMessage}/>
       <p>{message}</p>
-      <Posts />
+      <Posts setMessage={setMessage} setPosts={setPosts} posts={posts}/>
     </>
   )
 }
