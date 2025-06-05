@@ -1,11 +1,13 @@
 import "./App.css";
 
 function getPosts() {
-  
+  return JSON.parse(localStorage.getItem("posts"));
 }
 
-function savePost() {
-  
+function savePost({post}) {
+  let storedArray = JSON.parse(localStorage.getItem("posts")) || [];
+  storedArray.push(post)
+  localStorage.setItem("posts", JSON.stringify(storedArray));
 }
 
 function App() {
