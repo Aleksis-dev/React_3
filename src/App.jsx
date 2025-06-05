@@ -43,6 +43,12 @@ function Form({submitHandler}) {
   )
 }
 
+function wait(seconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, seconds * 1000);
+  });
+}
+
 function App() {
   const [message, setMessage] = useState(null);
   const submitHandler = (e) => {
@@ -54,7 +60,12 @@ function App() {
     const post = { title, content }
     savePost({post});
     form.reset();
-    setMessage("Successfully stored your post!")
+    async function msg() {
+      setMessage("Successfully stored your post!")
+      await wait(2);
+      setMessage(null); 
+    }
+    msg();
   }
   return (
     <>
