@@ -1,5 +1,13 @@
 import "./App.css";
 
+function getPosts() {
+  
+}
+
+function savePost() {
+  
+}
+
 function App() {
   return (
     <>
